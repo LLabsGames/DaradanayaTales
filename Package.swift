@@ -8,9 +8,7 @@ let tgApi = "https://github.com/nerzh/swift-telegram-sdk"
 
 let package = Package(
     name: "DaradanayaTales",
-    platforms: [
-        SupportedPlatform.macOS(.v14)
-    ],
+    platforms: [ SupportedPlatform.macOS(.v14) ],
     products: [.executable(name: "DaradanayaTales", targets: ["DaradanayaTales"])],
     dependencies: [
         .package(url: tgApi, from: "3.1.4"),
@@ -26,6 +24,6 @@ let package = Package(
               ],
               path: "Sources/DaradanayaTalesBot",
               exclude: [],
-              resources: []),
+              resources: [.copy(".env")]),
     ]
 )

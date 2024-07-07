@@ -10,7 +10,7 @@ import Hummingbird
 import SwiftTelegramSdk
 
 public func configure(_ app: some ApplicationProtocol) async throws {
-    let tgApi: String = "XXXXXXXXXX:YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY"
+    let tgApi: String = ProcessInfo.processInfo.environment["TG_API_Key"] ?? ""
     
     /// SET WEBHOOK CONNECTION
     // let bot: TGBot = try await .init(connectionType: .webhook(webHookURL: URL(string: "https://your_domain/telegramWebHook")!),
