@@ -53,7 +53,7 @@ func buildApplication(_ args: some AppArguments) async throws -> some Applicatio
     }
     
     // load environment variables
-    let env = try await Environment.dotEnv(".env")
+    let env = try await Environment.dotEnv("/home/rpi4/DaradanayaTales/.env")
     
     // add Danaya API
     var postgresRepository: PostgresRepository?
