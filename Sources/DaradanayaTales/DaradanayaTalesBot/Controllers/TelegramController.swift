@@ -1,4 +1,9 @@
-// TelegramController.swift
+//
+//  TelegramController.swift
+//  DaradanayaTales
+//
+//  Created by Maxim Lanskoy on 06.07.2024.
+//
 
 import Foundation
 import Hummingbird

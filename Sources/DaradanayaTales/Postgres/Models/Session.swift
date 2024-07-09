@@ -1,8 +1,14 @@
+//
+//  Session.swift
+//  DaradanayaTales
+//
+//  Created by Maxim Lanskoy on 06.07.2024.
+//
+
 import FluentKit
 import Foundation
 import HummingbirdFluent
 import Hummingbird
-
 
 final class Coordinates: Fields, @unchecked Sendable {
     @Field(key: "latitude")
