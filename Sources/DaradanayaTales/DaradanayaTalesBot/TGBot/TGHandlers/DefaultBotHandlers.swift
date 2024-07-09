@@ -6,31 +6,40 @@
 //
 
 import SwiftTelegramSdk
-
-// MARK: - DefaultBotHandlers
+import HummingbirdFluent
+import Hummingbird
 
 final class DefaultBotHandlers {
-    static func addHandlers(bot: TGBot) async {
-        await defaultBaseHandler(bot: bot)
-        await messageHandler(bot: bot)
+    
+    static func addHandlers(bot: TGBot, fluent: Fluent) async {
+        await defaultBaseHandler(bot: bot, fluent: fluent)
         await commandPingHandler(bot: bot)
         await commandShowButtonsHandler(bot: bot)
         await buttonsActionHandler(bot: bot)
+        await messageHandler(bot: bot)
     }
 
-    private static func defaultBaseHandler(bot: TGBot) async {
+    private static func defaultBaseHandler(bot: TGBot, fluent: Fluent) async {
         await bot.dispatcher.add(TGBaseHandler({ update in
             guard let message = update.message else { return }
-            let params = TGSendMessageParams(chatId: .chat(message.chat.id), text: "TGBaseHandler")
-            try await bot.sendMessage(params: params)
+            let chatId = message.chat.id
+            
+            let session: Session
+            do {
+                if let presentSession = try await Session.find(chatId, on: fluent.db()) {
+                    session = presentSession
+                } else {
+                    session = Session(id: chatId, name: message.from?.username ?? "Unknown",
+                                      coordinates: Coordinates(latitude: 0, longitude: 0))
+                    try await session.save(on: fluent.db())
+                }
+                let params = TGSendMessageParams(chatId: .chat(chatId), text: "TGBaseHandler for \(chatId), @\(session.name)")
+                try await bot.sendMessage(params: params)
+            } catch {
+                print(String(reflecting: error))
+                bot.log.error("Failed to process update: \(String(reflecting: error))")
+            }
         }))
-    }
-
-    private static func messageHandler(bot: TGBot) async {
-        await bot.dispatcher.add(TGMessageHandler(filters: (.all && !.command.names(["/ping", "/show_buttons"]))) { update in
-            let params = TGSendMessageParams(chatId: .chat(update.message!.chat.id), text: "Success")
-            try await bot.sendMessage(params: params)
-        })
     }
 
     private static func commandPingHandler(bot: TGBot) async {
@@ -66,6 +75,13 @@ final class DefaultBotHandlers {
             let params = TGAnswerCallbackQueryParams(callbackQueryId: update.callbackQuery?.id ?? "0", text: update.callbackQuery?.data ?? "data not exist")
             try await bot.answerCallbackQuery(params: params)
             try await bot.sendMessage(params: .init(chatId: .chat(userId), text: "press 2"))
+        })
+    }
+    
+    private static func messageHandler(bot: TGBot) async {
+        await bot.dispatcher.add(TGMessageHandler(filters: (.all && !.command.names(["/ping", "/show_buttons"]))) { update in
+            let params = TGSendMessageParams(chatId: .chat(update.message!.chat.id), text: "Success")
+            try await bot.sendMessage(params: params)
         })
     }
 }
