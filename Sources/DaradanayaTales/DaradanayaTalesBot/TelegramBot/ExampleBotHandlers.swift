@@ -1,62 +1,21 @@
 //
-//  DefaultBotHandlers.swift
+//  ExampleBotHandlers.swift
 //  DaradanayaTales
 //
 //  Created by Maxim Lanskoy on 06.07.2024.
 //
 
 import SwiftTelegramSdk
-import HummingbirdFluent
-import Hummingbird
 
-final class DefaultBotHandlers {
+final class ExampleBotHandlers {
     
     static var routers = [String: TGRouter]()
     
-    static func addHandlers(bot: TGBot, botName: TGBotName, fluent: Fluent) async {
-        await defaultBaseHandler(bot: bot, botName: botName, fluent: fluent)
+    static func addHandlers(bot: TGBot) async {
         await commandPingHandler(bot: bot)
         await commandShowButtonsHandler(bot: bot)
         await buttonsActionHandler(bot: bot)
         await messageHandler(bot: bot)
-    }
-
-    private static func defaultBaseHandler(bot: TGBot, botName: TGBotName, fluent: Fluent) async {
-        await bot.dispatcher.add(TGBaseHandler({ update in
-            guard let message = update.message else { return }
-            let chatId = message.chat.id
-            
-            // Properties associated with request context
-            var properties = [String: AnyObject]()
-            
-            let session: Session
-            do {
-                if let presentSession = try await Session.find(chatId, on: fluent.db()) {
-                    session = presentSession
-                } else {
-                    //TODO: - Create a new session with default values
-                    session = Session()
-                    try await session.save(on: fluent.db())
-                }
-                
-                // Fetching from database is expensive operation. Store the session
-                // in properties to avoid fetching it again in handlers
-                properties["session"] = session
-                
-                let router = routers[session.location.route]
-                if let router = router {
-                    try router.process(update: update, botName: botName, properties: properties)
-                } else {
-                    print("Warning: chat \(chatId) has invalid router: \(session.location.route)")
-                }
-                
-                //let params = TGSendMessageParams(chatId: .chat(chatId), text: "TGBaseHandler for \(chatId), @\(session.name)")
-                //try await bot.sendMessage(params: params)
-            } catch {
-                print(String(reflecting: error))
-                bot.log.error("Failed to process update: \(String(reflecting: error))")
-            }
-        }))
     }
 
     private static func commandPingHandler(bot: TGBot) async {

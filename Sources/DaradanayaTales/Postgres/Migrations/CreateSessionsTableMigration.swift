@@ -12,7 +12,7 @@ struct CreateSessionsTableMigration: AsyncMigration {
         return try await database.schema("sessions")
             .field("chat_id", .int64, .identifier(auto: false))
             .field("settings_language", .string, .required)
-            .field("settings_mapsize", .string, .required)
+            .field("settings_emojiMapsize", .int, .required)
             .field("settings_profilesize", .string, .required)
             .field("location_universe", .string, .required)
             .field("location_galaxy", .string, .required)

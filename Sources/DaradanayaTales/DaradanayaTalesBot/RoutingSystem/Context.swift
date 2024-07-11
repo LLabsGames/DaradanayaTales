@@ -44,8 +44,8 @@ public class TGContext {
         guard let message = message else { return false }
         return message.chat.type == .private
     }
-	public var chatId: Int64? { return message?.chat.id ??
-        update.callbackQuery?.message?.chat.id
+	public var chatId: Int64? {
+        return message?.chat.id ?? update.callbackQuery?.message?.chat.id
     }
 	public var fromId: Int64? {
         return update.message?.from?.id ?? (update.editedMessage?.from?.id ?? update.callbackQuery?.from.id)

@@ -95,17 +95,17 @@ final class Settings: Fields, @unchecked Sendable {
     @Field(key: "language")
     var language: String
 
-    @Field(key: "mapsize")
-    var mapsize: String
+    @Field(key: "emojiMapsize")
+    var emojiMapsize: Int
 
     @Field(key: "profilesize")
     var profilesize: String
 
     init() { }
 
-    init(language: String, mapsize: String, profilesize: String) {
+    init(language: String, emojiMapsize: Int, profilesize: String) {
         self.language = language
-        self.mapsize = mapsize
+        self.emojiMapsize = emojiMapsize
         self.profilesize = profilesize
     }
 }

@@ -59,7 +59,7 @@ public func buildApplication(_ arguments: some AppArguments) async throws -> som
     try await fluent.migrate()
     
     // Add controller
-    SessionsController(fluent: fluent).addRoutes(to: router.group("api/v1/sessions"))
+    // SessionsController(fluent: fluent).addRoutes(to: router.group("api/v1/sessions"))
     
     // Create application
     var app = Application(
@@ -97,7 +97,7 @@ func configureTelegramBot(_ app: some ApplicationProtocol, actor: TGBotActor, ke
     
     let botName = try await bot.getMyName()
     await actor.setBot(bot)
-    await DefaultBotHandlers.addHandlers(bot: actor.bot, botName: botName, fluent: fluent)
+    await RoutedBotHandlers.addHandlers(bot: actor.bot, botName: botName, fluent: fluent)
     try await actor.bot.start()
 }
 
