@@ -11,10 +11,17 @@ struct CreateSessionsTableMigration: AsyncMigration {
     func prepare(on database: Database) async throws {
         return try await database.schema("sessions")
             .field("chat_id", .int64, .identifier(auto: false))
-            .field("name", .string, .required)
-            .field("coordinates_latitude", .double, .required)
-            .field("coordinates_longitude", .double, .required)
-            .unique(on: "name")
+            .field("settings_language", .string, .required)
+            .field("settings_mapsize", .string, .required)
+            .field("settings_profilesize", .string, .required)
+            .field("location_universe", .string, .required)
+            .field("location_galaxy", .string, .required)
+            .field("location_planet", .string, .required)
+            .field("location_route", .string, .required)
+            .field("player_race", .string, .required)
+            .field("player_state", .string, .required)
+            .field("player_nickname", .string, .required)
+            .field("player_class", .string, .required)
             .create()
     }
 

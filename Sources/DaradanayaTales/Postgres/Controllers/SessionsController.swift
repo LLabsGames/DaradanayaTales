@@ -80,13 +80,8 @@ struct SessionsController<Context: RequestContext> {
         }
         
         let updatedSession = try await request.decode(as: Session.self, context: context)
-        
-        session.name = updatedSession.name
-        session.coordinates.latitude = updatedSession.coordinates.latitude
-        session.coordinates.longitude = updatedSession.coordinates.longitude
-        
+        session.update(with: updatedSession)
         try await session.save(on: fluent.db())
-        
         return .ok
     }
     

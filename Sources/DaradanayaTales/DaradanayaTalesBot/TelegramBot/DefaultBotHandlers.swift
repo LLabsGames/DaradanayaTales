@@ -11,30 +11,47 @@ import Hummingbird
 
 final class DefaultBotHandlers {
     
-    static func addHandlers(bot: TGBot, fluent: Fluent) async {
-        await defaultBaseHandler(bot: bot, fluent: fluent)
+    static var routers = [String: TGRouter]()
+    
+    static func addHandlers(bot: TGBot, botName: TGBotName, fluent: Fluent) async {
+        await defaultBaseHandler(bot: bot, botName: botName, fluent: fluent)
         await commandPingHandler(bot: bot)
         await commandShowButtonsHandler(bot: bot)
         await buttonsActionHandler(bot: bot)
         await messageHandler(bot: bot)
     }
 
-    private static func defaultBaseHandler(bot: TGBot, fluent: Fluent) async {
+    private static func defaultBaseHandler(bot: TGBot, botName: TGBotName, fluent: Fluent) async {
         await bot.dispatcher.add(TGBaseHandler({ update in
             guard let message = update.message else { return }
             let chatId = message.chat.id
+            
+            // Properties associated with request context
+            var properties = [String: AnyObject]()
             
             let session: Session
             do {
                 if let presentSession = try await Session.find(chatId, on: fluent.db()) {
                     session = presentSession
                 } else {
-                    session = Session(id: chatId, name: message.from?.username ?? "Unknown",
-                                      coordinates: Coordinates(latitude: 0, longitude: 0))
+                    //TODO: - Create a new session with default values
+                    session = Session()
                     try await session.save(on: fluent.db())
                 }
-                let params = TGSendMessageParams(chatId: .chat(chatId), text: "TGBaseHandler for \(chatId), @\(session.name)")
-                try await bot.sendMessage(params: params)
+                
+                // Fetching from database is expensive operation. Store the session
+                // in properties to avoid fetching it again in handlers
+                properties["session"] = session
+                
+                let router = routers[session.location.route]
+                if let router = router {
+                    try router.process(update: update, botName: botName, properties: properties)
+                } else {
+                    print("Warning: chat \(chatId) has invalid router: \(session.location.route)")
+                }
+                
+                //let params = TGSendMessageParams(chatId: .chat(chatId), text: "TGBaseHandler for \(chatId), @\(session.name)")
+                //try await bot.sendMessage(params: params)
             } catch {
                 print(String(reflecting: error))
                 bot.log.error("Failed to process update: \(String(reflecting: error))")

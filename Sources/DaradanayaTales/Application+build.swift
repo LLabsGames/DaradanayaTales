@@ -95,8 +95,9 @@ func configureTelegramBot(_ app: some ApplicationProtocol, actor: TGBotActor, ke
         log: app.logger
     )
     
+    let botName = try await bot.getMyName()
     await actor.setBot(bot)
-    await DefaultBotHandlers.addHandlers(bot: actor.bot, fluent: fluent)
+    await DefaultBotHandlers.addHandlers(bot: actor.bot, botName: botName, fluent: fluent)
     try await actor.bot.start()
 }
 
