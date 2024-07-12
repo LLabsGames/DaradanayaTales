@@ -24,14 +24,18 @@ final class Session: Model, @unchecked Sendable {
 
     @Group(key: "player")
     var player: Player
+    
+    @Group(key: "techData")
+    var techData: TechData
 
     init() {}
 
-    init(id: Int64, settings: Settings, location: Location, player: Player) {
+    init(id: Int64, settings: Settings = Settings(), location: Location = Location(), player: Player, techData: TechData = TechData()) {
         self.id = id
         self.settings = settings
         self.location = location
-        self.player = player
+        self.player   = player
+        self.techData = techData
     }
     
     func update(with session: Session) {
@@ -42,70 +46,3 @@ final class Session: Model, @unchecked Sendable {
 }
 
 extension Session: ResponseCodable, Codable {}
-
-final class Player: Fields, @unchecked Sendable {
-    @Field(key: "race")
-    var race: String
-
-    @Field(key: "state")
-    var state: String
-
-    @Field(key: "nickname")
-    var nickname: String
-
-    @Field(key: "class")
-    var playerClass: String
-
-    // Other player attributes can be added here...
-
-    init() { }
-
-    init(race: String, state: String, nickname: String, playerClass: String) {
-        self.race = race
-        self.state = state
-        self.nickname = nickname
-        self.playerClass = playerClass
-    }
-}
-
-final class Location: Fields, @unchecked Sendable {
-    @Field(key: "universe")
-    var universe: String
-
-    @Field(key: "galaxy")
-    var galaxy: String
-
-    @Field(key: "planet")
-    var planet: String
-
-    @Field(key: "route")
-    var route: String
-
-    init() { }
-
-    init(universe: String, galaxy: String, planet: String, route: String) {
-        self.universe = universe
-        self.galaxy = galaxy
-        self.planet = planet
-        self.route = route
-    }
-}
-
-final class Settings: Fields, @unchecked Sendable {
-    @Field(key: "language")
-    var language: String
-
-    @Field(key: "emojiMapsize")
-    var emojiMapsize: Int
-
-    @Field(key: "profilesize")
-    var profilesize: String
-
-    init() { }
-
-    init(language: String, emojiMapsize: Int, profilesize: String) {
-        self.language = language
-        self.emojiMapsize = emojiMapsize
-        self.profilesize = profilesize
-    }
-}

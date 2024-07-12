@@ -27,10 +27,11 @@ final class RoutedBotHandlers {
                 if let presentSession = try await Session.find(chatId, on: fluent.db()) {
                     session = presentSession
                 } else {
-                    let location = Location(universe: "Euclid", galaxy: "IO-1", planet: "Kassiopea", route: "main")
-                    let settings = Settings(language: "en", emojiMapsize: 9, profilesize: "full")
-                    let  player  = Player(race: "Elf", state: "Male", nickname: nickName ?? "Daya", playerClass: "Universal")
-                    session = Session(id: chatId, settings: settings, location: location, player: player)
+                    let player = Player(race: "Elf", state: "Male", nickname: nickName ?? "Daya", playerClass: "Universal")
+                    let settings = Settings(profilesize: .full)
+                    let location = Location(route: "main")
+                    let techData = TechData(referralFrom: nil)
+                    session = Session(id: chatId, settings: settings, location: location, player: player, techData: techData)
                     try await session.save(on: fluent.db())
                 }
                 

@@ -22,6 +22,8 @@ struct CreateSessionsTableMigration: AsyncMigration {
             .field("player_state", .string, .required)
             .field("player_nickname", .string, .required)
             .field("player_class", .string, .required)
+            .field("techData_referralFrom", .int64)
+            .field("techData_referrals", .array(of: .int64), .required)
             .create()
     }
 
