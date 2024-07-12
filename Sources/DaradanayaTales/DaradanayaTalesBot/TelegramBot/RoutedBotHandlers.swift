@@ -41,7 +41,7 @@ final class RoutedBotHandlers {
                 
                 let router = routers[session.location.route]
                 if let router = router {
-                    try router.process(update: update, botName: botName, properties: properties)
+                    try await router.process(update: update, bot: bot, botName: botName, properties: properties)
                 } else {
                     bot.log.warning("Warning: chat \(chatId) has invalid router: \(session.location.route)")
                 }

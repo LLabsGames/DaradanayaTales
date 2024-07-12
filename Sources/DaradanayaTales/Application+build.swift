@@ -98,6 +98,9 @@ func configureTelegramBot(_ app: some ApplicationProtocol, actor: TGBotActor, ke
     let botName = try await bot.getMyName()
     await actor.setBot(bot)
     await RoutedBotHandlers.addHandlers(bot: actor.bot, botName: botName, fluent: fluent)
+    
+    Controllers.preLoad()
+    
     try await actor.bot.start()
 }
 

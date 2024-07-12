@@ -10,19 +10,19 @@ import SwiftTelegramSdk
 
 class MainController {
     typealias T = MainController
-
-    init(bot: TGBot) {
-//        routers["main"] = TGRouter(bot: bot) { router in
-//            router[Commands.start] = onStart
-//            router[Commands.stop] = onStop
-//            // router[Commands.help] = onHelp
-//            // router[Commands.add] = onAdd
-//            // router[Commands.delete] = onDelete
-//            // router[Commands.list] = onList
-//            // router[Commands.support] = onSupport
-//            // router[.newChatMembers] = onNewChatMember
-//            // router[.callback_query(data: nil)] = onCallbackQuery
-//        }
+    
+    init() {
+        RoutedBotHandlers.routers["main"] = TGRouter { router in
+            router[Commands.start] = onStart
+            router[Commands.stop] = onStop
+            // router[Commands.help] = onHelp
+            // router[Commands.add] = onAdd
+            // router[Commands.delete] = onDelete
+            // router[Commands.list] = onList
+            // router[Commands.support] = onSupport
+            // router[.newChatMembers] = onNewChatMember
+            // router[.callback_query(data: nil)] = onCallbackQuery
+        }
     }
     
     func onStart(context: TGContext) async throws -> Bool {
@@ -135,19 +135,16 @@ class MainController {
     // }
     
     func showMainMenu(context: TGContext, text: String) async throws {
-        // Use replies in group chats, otherwise bot won't be able to see the text typed by user.
-        // In private chats don't clutter the chat with quoted replies.
         let replyTo = context.privateChat ? nil : context.message?.messageId
         guard let rawChatId = context.chatId ?? context.session.id else { return }
         let chatId = TGChatId.chat(rawChatId)
         
-        let keyboard = [[TGKeyboardButton(text: "Add"), 
+        let keyboard = [[TGKeyboardButton(text: "Add"),
                          TGKeyboardButton(text: "List"),
-                         TGKeyboardButton(text: "Delete")], 
+                         TGKeyboardButton(text: "Delete")],
                         [TGKeyboardButton(text: "Help"),
                          TGKeyboardButton(text: "Support")]]
-        var replyMarkup = TGReplyKeyboardMarkup(keyboard: keyboard)
-        //markup.one_time_keyboard = true
+        let replyMarkup = TGReplyKeyboardMarkup(keyboard: keyboard)
         replyMarkup.resizeKeyboard = true
         replyMarkup.selective = replyTo != nil
         
