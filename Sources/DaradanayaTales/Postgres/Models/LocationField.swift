@@ -19,6 +19,9 @@ final class Location: Fields, @unchecked Sendable {
 
     @Field(key: "route")
     var route: String
+    
+    @Group(key: "coordinates")
+    var coordinates: Coordinates
 
     init() { }
 
@@ -27,5 +30,20 @@ final class Location: Fields, @unchecked Sendable {
         self.galaxy = galaxy
         self.planet = planet
         self.route = route
+    }
+}
+
+final class Coordinates: Fields, @unchecked Sendable {
+    @Field(key: "x")
+    var x: Int
+
+    @Field(key: "y")
+    var y: Int
+
+    init() { }
+
+    init(x: Int, y: Int) {
+        self.x = x
+        self.y = y
     }
 }

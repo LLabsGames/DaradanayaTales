@@ -9,6 +9,8 @@ import ArgumentParser
 import Hummingbird
 import Logging
 
+let isTest = false
+
 @main
 struct App: AsyncParsableCommand, AppArguments {
     @Option(name: .shortAndLong)

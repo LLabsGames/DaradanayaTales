@@ -18,6 +18,8 @@ struct CreateSessionsTableMigration: AsyncMigration {
             .field("location_galaxy", .string, .required)
             .field("location_planet", .string, .required)
             .field("location_route", .string, .required)
+            .field("location_coordinates_x", .int)
+            .field("location_coordinates_y", .int)
             .field("player_race", .string, .required)
             .field("player_state", .string, .required)
             .field("player_nickname", .string, .required)
