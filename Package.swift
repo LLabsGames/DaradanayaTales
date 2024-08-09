@@ -2,44 +2,40 @@
 
 import PackageDescription
 
-let packageDependencies: [Package.Dependency] = [
-    .package(url: "https://github.com/Maxim-Lanskoy/SwiftTelegramSDK.git", from: "3.4.0"),
-    .package(url: "https://github.com/hummingbird-project/hummingbird.git", from: "2.0.0-rc.2"),
-    .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.4.0"),
-    .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.9.2"),
-    .package(url: "https://github.com/swift-server/async-http-client.git", from: "1.21.2"),
-    .package(url: "https://github.com/hummingbird-project/hummingbird-fluent.git", from: "2.0.0-beta.2")
-]
-
-let targetDependencies: [PackageDescription.Target.Dependency] = [
-    .product(name: "ArgumentParser", package: "swift-argument-parser"),
-    .product(name: "Hummingbird", package: "hummingbird"),
-    .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver"),
-    .product(name: "HummingbirdFluent", package: "hummingbird-fluent"),
-    .product(name: "AsyncHTTPClient", package: "async-http-client"),
-    .product(name: "SwiftTelegramSdk", package: "SwiftTelegramSDK")
-]
-
 let package = Package(
     name: "DaradanayaTales",
-    platforms: [.macOS(.v14), .iOS(.v17), .tvOS(.v17)],
-    products: [
-        .executable(name: "DaradanayaTales", targets: ["DaradanayaTales"]),
+    platforms: [
+        SupportedPlatform.iOS(.v15),
+        SupportedPlatform.macOS(.v14)
     ],
-    dependencies: packageDependencies, targets: [
-        
-        .executableTarget(name: "DaradanayaTales", dependencies: targetDependencies,
-                          path: "Sources/DaradanayaTales", swiftSettings: [
-                // Enable better optimizations when building in Release configuration. Despite the use of
-                // the `.unsafeFlags` construct required by SwiftPM, this flag is recommended for Release
-                // builds. See <https://github.com/swift-server/guides#building-for-production> for details.
-                .unsafeFlags(["-cross-module-optimization"], .when(configuration: .release))
+    products: [
+        .executable(
+            name: "DaradanayaTales",
+            targets: ["DaradanayaTales"]),
+        .library(
+            name: "DaradanayaDriver",
+            type: .dynamic,
+            targets: ["DaradanayaDriver"]),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/migueldeicaza/SwiftGodot", revision: "fe24cb01640c2d4d48c8555a71adfe346d9543cf"),
+        .package(url: "https://github.com/migueldeicaza/SwiftGodotKit", branch: "main")
+    ],
+    targets: [
+        .executableTarget(
+            name: "DaradanayaTales",
+            dependencies: [
+                "DaradanayaDriver",
+                .product(name: "SwiftGodotKit", package: "SwiftGodotKit")
+            ],
+            resources: [
+                .copy("Resources/DaradanayaDriver.pck"),
+                .copy("../../godot")
             ]),
-        
-        .testTarget(name: "AppTests", dependencies: [
-                .byName(name: "DaradanayaTales"),
-                .product(name: "HummingbirdTesting", package: "hummingbird")
-            ], path: "Tests/AppTests")
-        
+        .target(
+            name: "DaradanayaDriver",
+            dependencies: [
+                .product(name: "SwiftGodot", package: "SwiftGodot")
+            ]),
     ]
 )
